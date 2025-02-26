@@ -9,16 +9,13 @@ class Pipeline:
         # You can add your custom valves here.
         AZURE_DEEPSEEKR1_API_KEY: str
         AZURE_DEEPSEEKR1_ENDPOINT: str
-        AZURE_DEEPSEEKR1_API_VERSION: str
 
     def __init__(self):
-        self.type = "manifold"
-        self.name = "Azure "
+        self.name = "Azure AI: DeepSeek-R1"
         self.valves = self.Valves(
             **{
                 "AZURE_DEEPSEEKR1_API_KEY": os.getenv("AZURE_DEEPSEEKR1_API_KEY", "your-azure-deepseek-r1-api-key-here"),
                 "AZURE_DEEPSEEKR1_ENDPOINT": os.getenv("AZURE_DEEPSEEKR1_ENDPOINT", "your-azure-deepseek-r1-endpoint-here"),
-                "AZURE_DEEPSEEKR1_API_VERSION": os.getenv("AZURE_DEEPSEEKR1_API_VERSION", "2024-05-01-preview"),
             }
         )
         self.set_pipelines()
@@ -56,17 +53,17 @@ class Pipeline:
         print(user_message)
 
         headers = {
-            "api-key": self.valves.AZURE_DEEPSEEKR1_API_KEY,
+            "Authorization": f"Bearer {self.valves.AZURE_DEEPSEEKR1_API_KEY}",
             "Content-Type": "application/json",
         }
 
-        url = f"{self.valves.AZURE_DEEPSEEKR1_ENDPOINT}/models/chat/completions?api-version={self.valves.AZURE_DEEPSEEKR1_API_VERSION}"
+        url = f"{self.valves.AZURE_DEEPSEEKR1_ENDPOINT}/chat/completions"
 
         print(body)
 
         allowed_params = {'messages', 'temperature', 'role', 'content', 'contentPart', 'contentPartImage',
                           'enhancements', 'dataSources', 'n', 'stream', 'stop', 'max_tokens', 'presence_penalty',
-                          'frequency_penalty', 'logit_bias', 'user', 'function_call', 'funcions', 'tools',
+                          'frequency_penalty', 'logit_bias', 'function_call', 'funcions', 'tools',
                           'tool_choice', 'top_p', 'log_probs', 'top_logprobs', 'response_format', 'seed', 'model'}
         # remap user field
         if "user" in body and not isinstance(body["user"], str):
